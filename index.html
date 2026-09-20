@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#090d0b">
+<title>VOLYFT</title>
+<style>
+:root{
+  --bg:#080b09;--panel:#101612;--panel2:#151d18;--line:#263129;
+  --text:#f3f7f4;--muted:#8d9a91;--green:#27f46c;--green2:#12b94b;
+}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(circle at 50% -20%,#15301e 0,#090d0b 34%,#060806 100%);color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;min-height:100vh}
+.app{max-width:760px;margin:auto;padding:18px 16px 100px}
+header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+.brand{font-size:28px;font-weight:900;letter-spacing:2px}.brand span{color:var(--green)}
+.tag{font-size:11px;color:var(--muted);letter-spacing:2px;text-transform:uppercase}
+.card{background:linear-gradient(145deg,rgba(20,29,23,.96),rgba(11,16,13,.96));border:1px solid var(--line);border-radius:20px;padding:18px;margin:12px 0;box-shadow:0 14px 40px rgba(0,0,0,.22)}
+h1{font-size:28px;margin:5px 0} h2{font-size:18px;margin:0 0 14px} p{color:var(--muted);line-height:1.45}
+.hero{padding:24px}.hero strong{color:var(--green)}
+.tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:16px 0}
+.tab{border:1px solid var(--line);background:#0e1410;color:var(--muted);padding:11px;border-radius:12px;font-weight:700}
+.tab.active{background:rgba(39,244,108,.12);border-color:var(--green);color:var(--green)}
+.view{display:none}.view.active{display:block}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+label{font-size:12px;color:var(--muted);font-weight:700;display:block;margin-bottom:7px;text-transform:uppercase;letter-spacing:.7px}
+select,input{width:100%;background:#0a0f0c;color:var(--text);border:1px solid #334038;border-radius:12px;padding:13px;font-size:15px;outline:none}
+select:focus,input:focus{border-color:var(--green)}
+button{cursor:pointer}
+.primary{width:100%;border:0;border-radius:13px;background:var(--green);color:#041007;padding:14px;font-weight:900;font-size:15px;margin-top:14px}
+.secondary{border:1px solid var(--line);background:#121914;color:var(--text);border-radius:10px;padding:9px 12px}
+.exercise{display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--line);padding:13px 0;gap:10px}
+.exercise:first-child{border-top:0}
+.exercise b{display:block}.exercise small{color:var(--muted)}
+.badge{font-size:10px;border:1px solid #36533f;color:#9aefb4;padding:4px 7px;border-radius:999px;white-space:nowrap}
+.map-wrap{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.body-card{background:#0a0f0c;border:1px solid var(--line);border-radius:16px;padding:10px;text-align:center}
+.body-card h3{font-size:13px;margin:4px;color:var(--muted)}
+svg{width:100%;max-height:360px}
+.muscle{fill:#26312a;stroke:#435047;stroke-width:1.4;transition:.25s}
+.muscle.hit1{fill:#185c2d}.muscle.hit2{fill:#19a347}.muscle.hit3{fill:var(--green);filter:drop-shadow(0 0 6px rgba(39,244,108,.45))}
+.base{fill:#171d19;stroke:#3a453e;stroke-width:1.4}
+.legend{display:flex;gap:12px;justify-content:center;color:var(--muted);font-size:11px;margin-top:10px}
+.dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:4px}.d0{background:#26312a}.d1{background:#185c2d}.d2{background:#19a347}.d3{background:var(--green)}
+.empty{color:var(--muted);text-align:center;padding:20px}
+.note{font-size:12px;color:var(--muted);margin-top:10px}
+@media(max-width:560px){.grid{grid-template-columns:1fr}.app{padding:14px 12px 90px}.brand{font-size:24px}.map-wrap{gap:7px}.body-card{padding:5px}}
+
+.tracker-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px}
+.timer{font-variant-numeric:tabular-nums;font-size:22px;font-weight:900;color:var(--green)}
+.set-table{width:100%;border-collapse:collapse}.set-table th{font-size:10px;color:var(--muted);text-align:left;padding:7px 4px}.set-table td{padding:6px 3px;border-top:1px solid var(--line)}
+.set-table input{padding:9px 7px;border-radius:8px;min-width:0}.check{width:34px;height:34px;border:1px solid var(--line);background:#0b110d;color:var(--green);border-radius:8px;font-weight:900}
+.check.done{background:var(--green);color:#051008}.exercise-track{border:1px solid var(--line);border-radius:14px;padding:12px;margin:10px 0;background:#0b100d}
+.exercise-track h3{margin:0;font-size:15px}.exercise-track .meta{color:var(--muted);font-size:11px;margin:3px 0 8px}
+.mini-actions{display:flex;gap:8px}.mini-actions button{flex:1}
+.body-label{fill:#7f8b83;font-size:6px;text-anchor:middle}.outline{fill:#111713;stroke:#3d4941;stroke-width:1}
+.map-note{font-size:11px;color:var(--muted);text-align:center}
+@media(max-width:560px){.set-table th:nth-child(5),.set-table td:nth-child(5){display:none}}
+
+/* VOLYFT polish */
+select{
+  appearance:none;-webkit-appearance:none;
+  background:
+    linear-gradient(45deg,transparent 50%,#62f88d 50%) calc(100% - 18px) 52%/6px 6px no-repeat,
+    linear-gradient(135deg,#62f88d 50%,transparent 50%) calc(100% - 13px) 52%/6px 6px no-repeat,
+    linear-gradient(180deg,#0b100d,#070a08);
+  border:1px solid #2d3b32;color:#f4f7f5;padding-right:38px;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.025),0 6px 20px rgba(0,0,0,.12)
+}
+select:hover,select:focus{border-color:#3f7650;box-shadow:0 0 0 3px rgba(39,244,108,.07)}
+option{background:#080b09;color:#f4f7f5}
+.exercise-track:nth-child(4n+1){background:linear-gradient(135deg,#101a13,#0a100c)}
+.exercise-track:nth-child(4n+2){background:linear-gradient(135deg,#111713,#0b1410)}
+.exercise-track:nth-child(4n+3){background:linear-gradient(135deg,#121b17,#09110d)}
+.exercise-track:nth-child(4n){background:linear-gradient(135deg,#0e1812,#0c1210)}
+.exercise-track{box-shadow:inset 3px 0 0 rgba(39,244,108,.17),0 8px 20px rgba(0,0,0,.12)}
+.exercise-track:nth-child(even){box-shadow:inset 3px 0 0 rgba(123,255,163,.32),0 8px 20px rgba(0,0,0,.12)}
+.prev-box{margin:8px 0 10px;padding:9px 10px;border-radius:10px;background:#070b08;border:1px solid #202a23;color:#9aaa9f;font-size:11px}
+.prev-box strong{color:#dfe8e2}.progress-tip{color:#64f88f;font-weight:800;margin-left:5px}
+.history-set{display:inline-block;margin:4px 5px 0 0;padding:5px 7px;border-radius:7px;background:#111a14;border:1px solid #26352b;color:#b8c4bc;font-size:10px}
+.muscle{stroke:#536158;stroke-width:.75}.detail-line{fill:none;stroke:#071009;stroke-width:.75;opacity:.85;pointer-events:none}
+.tendon{fill:#18201b;stroke:#445047;stroke-width:.65}.bonehint{fill:#202722;stroke:#4a554e;stroke-width:.6}
+.map-wrap .body-card{background:radial-gradient(circle at 50% 35%,#111b14 0,#080c09 58%,#060806 100%)}
+.map-wrap svg{max-height:520px}
+.body-title{fill:#8d9a91;font-size:5px;letter-spacing:1.3px;text-anchor:middle}
+@media(max-width:560px){.map-wrap svg{max-height:430px}.prev-box{font-size:10px}}
+</style>
+</head>
+<body>
+<div class="app">
+<header><div><div class="brand">VOL<span>YFT</span></div><div class="tag">Train • Recover • Adapt</div></div></header>
+
+<section class="card hero">
+  <div class="tag">Your training, visualised</div>
+  <h1>Build. Train. <strong>Progress.</strong></h1>
+  <p>A simple first version of VOLYFT. Build workouts, filter exercises and watch your weekly muscle map come alive.</p>
+</section>
+
+<div class="tabs">
+ <button class="tab active" data-view="builder">Builder</button>
+ <button class="tab" data-view="map">Body Map</button>
+ <button class="tab" data-view="workout">Workout</button>
+</div>
+
+<section id="builder" class="view active">
+ <div class="card">
+  <h2>Workout Creator</h2>
+  <div class="grid">
+   <div><label>Muscle group</label><select id="muscle">
+    <option value="all">Any muscle</option><option>Chest</option><option>Back</option><option>Shoulders</option><option>Biceps</option><option>Triceps</option><option>Quads</option><option>Hamstrings</option><option>Glutes</option><option>Calves</option><option>Core</option>
+   </select></div>
+   <div><label>Exercise type</label><select id="type">
+    <option value="all">Compound + Isolation</option><option value="Compound">Compound only</option><option value="Isolation">Isolation only</option>
+   </select></div>
+   <div><label>Number of exercises</label><select id="count"><option>3</option><option selected>5</option><option>6</option><option>8</option></select></div>
+   <div><label>Goal</label><select id="goal"><option>Hypertrophy</option><option>Strength</option><option>General fitness</option></select></div>
+  </div>
+  <button class="primary" onclick="generateWorkout()">Generate Workout</button>
+ </div>
+ <div class="card"><h2>Preview</h2><div id="preview" class="empty">Choose your filters and generate a workout.</div></div>
+</section>
+
+<section id="map" class="view">
+ <div class="card">
+  <h2>Weekly Body Map</h2>
+  <p>The brighter the muscle, the more work you've logged for it this week. Last week stays beside it for comparison.</p>
+  <div class="map-wrap">
+   <div class="body-card"><h3>THIS WEEK</h3><div id="currentMap"></div></div>
+   <div class="body-card"><h3>LAST WEEK</h3><div id="lastMap"></div></div>
+  </div>
+  <div class="map-note">Individual anatomical regions are segmented visually; training colour currently follows the major muscle group assigned to each exercise.</div><div class="legend"><span><i class="dot d0"></i>None</span><span><i class="dot d1"></i>Light</span><span><i class="dot d2"></i>Good</span><span><i class="dot d3"></i>High</span></div>
+  <button class="secondary" style="margin-top:14px" onclick="resetDemo()">Reset training data</button>
+ </div>
+</section>
+
+<section id="workout" class="view">
+ <div class="card">
+  <div class="tracker-head"><div><div class="tag">Live session</div><h2 style="margin:3px 0">Current Workout</h2></div><div class="timer" id="timer">00:00</div></div>
+  <div class="mini-actions"><button class="secondary" onclick="toggleTimer()" id="timerBtn">▶ Start Timer</button><button class="secondary" onclick="addExercise()">＋ Add Exercise</button></div>
+  <div id="currentWorkout" class="empty">Generate a workout first.</div>
+  <button id="completeBtn" class="primary" style="display:none" onclick="completeWorkout()">Complete & Save Workout</button>
+ </div>
+ <div class="card"><h2>Recent Sessions</h2><div id="history" class="empty">No completed sessions yet.</div></div>
+</section>
+</div>
+
+<script>
+const exercises=[
+{name:"Barbell Bench Press",muscle:"Chest",type:"Compound"},{name:"Incline Dumbbell Press",muscle:"Chest",type:"Compound"},{name:"Cable Fly",muscle:"Chest",type:"Isolation"},{name:"Pec Deck",muscle:"Chest",type:"Isolation"},
+{name:"Pull-Up",muscle:"Back",type:"Compound"},{name:"Barbell Row",muscle:"Back",type:"Compound"},{name:"Lat Pulldown",muscle:"Back",type:"Compound"},{name:"Straight-Arm Pulldown",muscle:"Back",type:"Isolation"},
+{name:"Overhead Press",muscle:"Shoulders",type:"Compound"},{name:"Dumbbell Lateral Raise",muscle:"Shoulders",type:"Isolation"},{name:"Rear Delt Fly",muscle:"Shoulders",type:"Isolation"},
+{name:"Chin-Up",muscle:"Biceps",type:"Compound"},{name:"Barbell Curl",muscle:"Biceps",type:"Isolation"},{name:"Hammer Curl",muscle:"Biceps",type:"Isolation"},
+{name:"Close-Grip Bench Press",muscle:"Triceps",type:"Compound"},{name:"Cable Pushdown",muscle:"Triceps",type:"Isolation"},{name:"Overhead Triceps Extension",muscle:"Triceps",type:"Isolation"},
+{name:"Back Squat",muscle:"Quads",type:"Compound"},{name:"Leg Press",muscle:"Quads",type:"Compound"},{name:"Leg Extension",muscle:"Quads",type:"Isolation"},
+{name:"Romanian Deadlift",muscle:"Hamstrings",type:"Compound"},{name:"Lying Leg Curl",muscle:"Hamstrings",type:"Isolation"},
+{name:"Hip Thrust",muscle:"Glutes",type:"Compound"},{name:"Cable Kickback",muscle:"Glutes",type:"Isolation"},
+{name:"Standing Calf Raise",muscle:"Calves",type:"Isolation"},{name:"Seated Calf Raise",muscle:"Calves",type:"Isolation"},
+{name:"Hanging Leg Raise",muscle:"Core",type:"Compound"},{name:"Cable Crunch",muscle:"Core",type:"Isolation"},{name:"Ab Wheel",muscle:"Core",type:"Compound"}
+];
+let workout=JSON.parse(localStorage.getItem("volyft_current")||"[]");
+let history=JSON.parse(localStorage.getItem("volyft_history")||"[]");
+
+document.querySelectorAll(".tab").forEach(b=>b.onclick=()=>{
+ document.querySelectorAll(".tab,.view").forEach(x=>x.classList.remove("active"));
+ b.classList.add("active");document.getElementById(b.dataset.view).classList.add("active");
+ if(b.dataset.view==="map") renderMaps();
+});
+
+function generateWorkout(){
+ const m=document.getElementById("muscle").value,t=document.getElementById("type").value,n=+document.getElementById("count").value;
+ let pool=exercises.filter(e=>(m==="all"||e.muscle===m)&&(t==="all"||e.type===t));
+ pool=[...pool].sort(()=>Math.random()-.5);
+ workout=pool.slice(0,n).map(e=>({...e,setData:Array.from({length:3},()=>({kg:"",reps:"",rpe:"",done:false}))}));
+ localStorage.setItem("volyft_current",JSON.stringify(workout));
+ renderWorkout();
+ document.getElementById("preview").innerHTML=workout.length?workout.map(exerciseRow).join(""):'<div class="empty">No exercises match those filters yet.</div>';
+}
+function exerciseRow(e){return `<div class="exercise"><div><b>${e.name}</b><small>${e.muscle}</small></div><span class="badge">${e.type}</span></div>`}
+function previousExercise(name){
+ for(const h of history){
+  const e=h.exercises.find(x=>x.name===name);
+  if(e) return {date:h.date,e};
+ }
+ return null;
+}
+function historyText(name){
+ const prev=previousExercise(name);
+ if(!prev)return `<div class="prev-box">No previous session yet — establish your baseline today.</div>`;
+ const sets=(prev.e.setData||[]).filter(x=>x.done||x.kg||x.reps);
+ if(!sets.length)return `<div class="prev-box"><strong>Last session:</strong> ${new Date(prev.date).toLocaleDateString()} • no set data</div>`;
+ const chips=sets.map(x=>`<span class="history-set">${x.kg||"—"}kg × ${x.reps||"—"}${x.rpe?` @${x.rpe}`:""}</span>`).join("");
+ let best=Math.max(...sets.map(x=>Number(x.kg)||0));
+ return `<div class="prev-box"><strong>Last:</strong> ${new Date(prev.date).toLocaleDateString()} ${best?`• best ${best}kg`:""}<br>${chips}<span class="progress-tip">↗ Beat one rep or add load when ready</span></div>`;
+}
+function renderWorkout(){
+ const box=document.getElementById("currentWorkout"),btn=document.getElementById("completeBtn");
+ if(!workout.length){box.className="empty";box.innerHTML="Generate a workout first.";btn.style.display="none";return}
+ box.className="";box.innerHTML=workout.map((e,ei)=>{
+   if(!e.setData)e.setData=Array.from({length:3},()=>({kg:"",reps:"",rpe:"",done:false}));
+   return `<div class="exercise-track"><h3>${e.name}</h3><div class="meta">${e.muscle} • ${e.type}</div>
+   ${historyText(e.name)}
+   <table class="set-table"><thead><tr><th>SET</th><th>KG</th><th>REPS</th><th>RPE</th><th>DONE</th></tr></thead><tbody>
+   ${e.setData.map((x,si)=>`<tr><td>${si+1}</td><td><input inputmode="decimal" placeholder="0" value="${x.kg}" onchange="updateSet(${ei},${si},'kg',this.value)"></td><td><input inputmode="numeric" placeholder="0" value="${x.reps}" onchange="updateSet(${ei},${si},'reps',this.value)"></td><td><input inputmode="decimal" placeholder="—" value="${x.rpe}" onchange="updateSet(${ei},${si},'rpe',this.value)"></td><td><button class="check ${x.done?'done':''}" onclick="toggleSet(${ei},${si})">${x.done?'✓':'○'}</button></td></tr>`).join("")}
+   </tbody></table><button class="secondary" onclick="addSet(${ei})">＋ Add Set</button></div>`
+ }).join("");btn.style.display="block";saveCurrent();
+}
+function saveCurrent(){localStorage.setItem("volyft_current",JSON.stringify(workout))}
+function updateSet(ei,si,k,v){workout[ei].setData[si][k]=v;saveCurrent()}
+function toggleSet(ei,si){workout[ei].setData[si].done=!workout[ei].setData[si].done;saveCurrent();renderWorkout()}
+function addSet(ei){workout[ei].setData.push({kg:"",reps:"",rpe:"",done:false});renderWorkout()}
+function addExercise(){
+ let name=prompt("Exercise name");if(!name)return;
+ let muscle=prompt("Muscle group (Chest, Back, Shoulders, Biceps, Triceps, Quads, Hamstrings, Glutes, Calves, Core)","Chest")||"Chest";
+ workout.push({name,muscle,type:"Custom",setData:Array.from({length:3},()=>({kg:"",reps:"",rpe:"",done:false}))});renderWorkout()
+}
+function completeWorkout(){
+ if(!workout.length)return;
+ history.unshift({date:new Date().toISOString(),duration:elapsed,exercises:JSON.parse(JSON.stringify(workout))});
+ history=history.slice(0,30);localStorage.setItem("volyft_history",JSON.stringify(history));
+ workout=[];elapsed=0;running=false;clearInterval(timerInterval);updateTimer();
+ localStorage.setItem("volyft_current","[]");renderWorkout();renderHistory();renderMaps();
+ alert("Workout saved — your sets, reps, weight and body map have been updated.");
+}
+let elapsed=0,running=false,timerInterval=null;
+function updateTimer(){let m=Math.floor(elapsed/60),sec=elapsed%60;document.getElementById("timer").textContent=String(m).padStart(2,"0")+":"+String(sec).padStart(2,"0")}
+function toggleTimer(){running=!running;document.getElementById("timerBtn").textContent=running?"⏸ Pause Timer":"▶ Start Timer";if(running){timerInterval=setInterval(()=>{elapsed++;updateTimer()},1000)}else clearInterval(timerInterval)}
+function weekStart(d){let x=new Date(d),day=(x.getDay()+6)%7;x.setHours(0,0,0,0);x.setDate(x.getDate()-day);return x}
+function scores(offset=0){
+ const now=weekStart(new Date());let start=new Date(now);start.setDate(start.getDate()-offset*7);let end=new Date(start);end.setDate(end.getDate()+7);
+ const s={};history.forEach(h=>{let d=new Date(h.date);if(d>=start&&d<end)h.exercises.forEach(e=>{let v=e.setData?Math.max(1,e.setData.filter(x=>x.done).length):1;s[e.muscle]=(s[e.muscle]||0)+v})});return s
+}
+function level(n){return n>=9?3:n>=5?2:n>=1?1:0}
+function bodySVG(s){
+ const c=m=>`muscle hit${level(s[m]||0)}`;
+ return `<svg viewBox="0 0 260 455" aria-label="Highly detailed front and back anatomical muscle map">
+ <defs><filter id="softGlow"><feGaussianBlur stdDeviation="1.2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
+ <!-- FRONT BODY -->
+ <text class="body-title" x="65" y="447">FRONT</text>
+ <ellipse class="bonehint" cx="65" cy="27" rx="15" ry="19"/><path class="tendon" d="M56 45 Q65 50 74 45 L78 59 52 59Z"/>
+ <!-- traps/clavicle -->
+ <path class="${c("Shoulders")}" d="M53 55 Q65 48 77 55 L72 65 58 65Z"/>
+ <!-- deltoid heads -->
+ <path class="${c("Shoulders")}" d="M52 58 Q37 57 31 70 Q29 82 39 88 L51 75Z"/>
+ <path class="${c("Shoulders")}" d="M78 58 Q93 57 99 70 Q101 82 91 88 L79 75Z"/>
+ <path class="detail-line" d="M36 67 Q44 70 50 77M94 67 Q86 70 80 77"/>
+ <!-- pecs split -->
+ <path class="${c("Chest")}" d="M53 61 Q64 57 64 76 Q56 84 45 79 L42 67Z"/>
+ <path class="${c("Chest")}" d="M77 61 Q66 57 66 76 Q74 84 85 79 L88 67Z"/>
+ <path class="${c("Chest")}" d="M45 80 Q55 85 64 78 L63 91 Q52 94 46 88Z"/>
+ <path class="${c("Chest")}" d="M85 80 Q75 85 66 78 L67 91 Q78 94 84 88Z"/>
+ <!-- serratus / obliques -->
+ <path class="${c("Core")}" d="M43 86 L52 91 48 113 40 108Z"/><path class="${c("Core")}" d="M87 86 L78 91 82 113 90 108Z"/>
+ <path class="${c("Core")}" d="M40 110 L49 115 47 143 38 134Z"/><path class="${c("Core")}" d="M90 110 L81 115 83 143 92 134Z"/>
+ <!-- abs 8 pack -->
+ <path class="${c("Core")}" d="M54 91 L63 91 62 106 53 106Z"/><path class="${c("Core")}" d="M67 91 L76 91 77 106 68 106Z"/>
+ <path class="${c("Core")}" d="M53 108 L62 108 61 123 52 122Z"/><path class="${c("Core")}" d="M68 108 L77 108 78 122 69 123Z"/>
+ <path class="${c("Core")}" d="M52 125 L61 125 60 140 51 138Z"/><path class="${c("Core")}" d="M69 125 L78 125 79 138 70 140Z"/>
+ <path class="${c("Core")}" d="M51 141 L60 143 59 156 52 151Z"/><path class="${c("Core")}" d="M70 143 L79 141 78 151 71 156Z"/>
+ <!-- biceps / forearms -->
+ <path class="${c("Biceps")}" d="M34 86 Q43 82 48 91 L44 126 Q37 134 31 125Z"/>
+ <path class="${c("Biceps")}" d="M96 86 Q87 82 82 91 L86 126 Q93 134 99 125Z"/>
+ <path class="${c("Triceps")}" d="M30 126 Q38 131 44 129 L40 164 26 160Z"/>
+ <path class="${c("Triceps")}" d="M100 126 Q92 131 86 129 L90 164 104 160Z"/>
+ <path class="tendon" d="M26 161 L40 165 35 191 22 187Z"/><path class="tendon" d="M104 161 L90 165 95 191 108 187Z"/>
+ <!-- hips/adductors -->
+ <path class="${c("Glutes")}" d="M50 153 Q65 159 80 153 L83 172 65 181 47 172Z"/>
+ <path class="${c("Quads")}" d="M48 173 Q57 170 62 181 L58 248 Q49 259 41 246Z"/>
+ <path class="${c("Quads")}" d="M82 173 Q73 170 68 181 L72 248 Q81 259 89 246Z"/>
+ <path class="${c("Quads")}" d="M41 178 Q34 193 35 236 L42 248 49 183Z"/>
+ <path class="${c("Quads")}" d="M89 178 Q96 193 95 236 L88 248 81 183Z"/>
+ <path class="${c("Hamstrings")}" d="M61 181 L64 181 63 244 58 248Z"/><path class="${c("Hamstrings")}" d="M69 181 L66 181 67 244 72 248Z"/>
+ <path class="bonehint" d="M42 250 Q50 245 58 252 L57 267 43 267Z"/><path class="bonehint" d="M88 250 Q80 245 72 252 L73 267 87 267Z"/>
+ <!-- calves: gastroc + tibialis -->
+ <path class="${c("Calves")}" d="M42 270 Q51 262 57 276 L53 324 Q47 335 40 322Z"/>
+ <path class="${c("Calves")}" d="M88 270 Q79 262 73 276 L77 324 Q83 335 90 322Z"/>
+ <path class="${c("Calves")}" d="M54 278 L59 283 56 337 51 326Z"/><path class="${c("Calves")}" d="M76 278 L71 283 74 337 79 326Z"/>
+ <path class="tendon" d="M41 325 L55 337 53 382 38 382Z"/><path class="tendon" d="M89 325 L75 337 77 382 92 382Z"/>
+ <path class="bonehint" d="M38 382 L53 382 57 394 31 394Z"/><path class="bonehint" d="M92 382 L77 382 73 394 99 394Z"/>
+
+ <!-- BACK BODY -->
+ <text class="body-title" x="195" y="447">BACK</text>
+ <ellipse class="bonehint" cx="195" cy="27" rx="15" ry="19"/><path class="tendon" d="M186 45 Q195 50 204 45 L208 59 182 59Z"/>
+ <!-- traps upper/mid/lower -->
+ <path class="${c("Back")}" d="M183 55 Q195 48 207 55 L202 70 195 77 188 70Z"/>
+ <path class="${c("Back")}" d="M188 70 L194 78 191 116 177 101Z"/><path class="${c("Back")}" d="M202 70 L196 78 199 116 213 101Z"/>
+ <path class="${c("Back")}" d="M192 79 L198 79 202 132 195 145 188 132Z"/>
+ <!-- rear delts -->
+ <path class="${c("Shoulders")}" d="M182 59 Q167 58 161 71 Q160 83 171 89 L184 76Z"/>
+ <path class="${c("Shoulders")}" d="M208 59 Q223 58 229 71 Q230 83 219 89 L206 76Z"/>
+ <!-- infraspinatus / teres -->
+ <path class="${c("Back")}" d="M183 75 L191 80 187 99 174 91Z"/><path class="${c("Back")}" d="M207 75 L199 80 203 99 216 91Z"/>
+ <!-- lats segmented -->
+ <path class="${c("Back")}" d="M174 94 L188 102 186 137 172 153 166 120Z"/>
+ <path class="${c("Back")}" d="M216 94 L202 102 204 137 218 153 224 120Z"/>
+ <path class="${c("Back")}" d="M173 123 L187 139 184 160 169 154Z"/><path class="${c("Back")}" d="M217 123 L203 139 206 160 221 154Z"/>
+ <!-- triceps heads / forearms -->
+ <path class="${c("Triceps")}" d="M165 87 Q174 81 179 91 L175 128 Q168 136 162 127Z"/>
+ <path class="${c("Triceps")}" d="M225 87 Q216 81 211 91 L215 128 Q222 136 228 127Z"/>
+ <path class="${c("Biceps")}" d="M161 128 Q168 133 175 131 L170 164 157 160Z"/>
+ <path class="${c("Biceps")}" d="M229 128 Q222 133 215 131 L220 164 233 160Z"/>
+ <path class="tendon" d="M157 161 L170 165 165 191 152 187Z"/><path class="tendon" d="M233 161 L220 165 225 191 238 187Z"/>
+ <!-- spinal erectors -->
+ <path class="${c("Back")}" d="M187 137 L194 145 192 164 184 159Z"/><path class="${c("Back")}" d="M203 137 L196 145 198 164 206 159Z"/>
+ <!-- glute max left/right -->
+ <path class="${c("Glutes")}" d="M178 158 Q194 151 194 187 Q181 200 171 187Z"/>
+ <path class="${c("Glutes")}" d="M212 158 Q196 151 196 187 Q209 200 219 187Z"/>
+ <path class="detail-line" d="M174 177 Q184 181 194 187M216 177 Q206 181 196 187"/>
+ <!-- hamstrings multiple heads -->
+ <path class="${c("Hamstrings")}" d="M174 191 Q185 187 192 198 L188 250 Q181 262 171 250Z"/>
+ <path class="${c("Hamstrings")}" d="M216 191 Q205 187 198 198 L202 250 Q209 262 219 250Z"/>
+ <path class="${c("Hamstrings")}" d="M191 199 L194 200 192 253 187 250Z"/><path class="${c("Hamstrings")}" d="M199 199 L196 200 198 253 203 250Z"/>
+ <path class="bonehint" d="M172 252 Q181 246 188 254 L187 268 173 268Z"/><path class="bonehint" d="M218 252 Q209 246 202 254 L203 268 217 268Z"/>
+ <!-- calves -->
+ <path class="${c("Calves")}" d="M173 271 Q182 261 190 276 L187 316 Q181 329 173 320Z"/>
+ <path class="${c("Calves")}" d="M217 271 Q208 261 200 276 L203 316 Q209 329 217 320Z"/>
+ <path class="${c("Calves")}" d="M177 316 Q184 325 187 339 L181 354 173 331Z"/><path class="${c("Calves")}" d="M213 316 Q206 325 203 339 L209 354 217 331Z"/>
+ <path class="tendon" d="M174 333 L186 354 183 382 168 382Z"/><path class="tendon" d="M216 333 L204 354 207 382 222 382Z"/>
+ <path class="bonehint" d="M168 382 L183 382 187 394 161 394Z"/><path class="bonehint" d="M222 382 L207 382 203 394 229 394Z"/>
+ <!-- anatomical separation strokes -->
+ <path class="detail-line" d="M65 58V156M195 57V162M41 247L56 252M89 247L74 252M171 249L188 254M219 249L202 254"/>
+ </svg>`;
+}
+function renderMaps(){document.getElementById("currentMap").innerHTML=bodySVG(scores(0));document.getElementById("lastMap").innerHTML=bodySVG(scores(1))}
+function renderHistory(){
+ const el=document.getElementById("history");
+ if(!history.length){el.className="empty";el.innerHTML="No completed sessions yet.";return}
+ el.className="";el.innerHTML=history.slice(0,8).map(h=>{
+   let sets=0,vol=0;
+   h.exercises.forEach(e=>(e.setData||[]).forEach(x=>{if(x.done||x.kg||x.reps){sets++;vol+=(Number(x.kg)||0)*(Number(x.reps)||0)}}));
+   const muscles=[...new Set(h.exercises.map(e=>e.muscle))].join(" • ");
+   return `<div class="exercise"><div><b>${new Date(h.date).toLocaleDateString()}</b><small>${muscles}<br>${sets} working sets${vol?` • ${Math.round(vol).toLocaleString()}kg volume`:""}</small></div><span class="badge">${h.exercises.length} exercises</span></div>`
+ }).join("");
+}
+function resetDemo(){if(confirm("Clear all VOLYFT workout history on this device?")){history=[];workout=[];localStorage.removeItem("volyft_history");localStorage.removeItem("volyft_current");renderWorkout();renderHistory();renderMaps()}}
+renderWorkout();renderHistory();renderMaps();
+</script>
+</body>
+</html>
